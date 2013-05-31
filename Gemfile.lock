@@ -64,6 +64,7 @@ GEM
       plucky (~> 0.5.2)
     multi_json (1.7.4)
     multipart-post (1.2.0)
+    oj (2.0.14)
     plucky (0.5.2)
       mongo (~> 1.5)
     polyglot (0.3.3)
@@ -125,6 +126,7 @@ DEPENDENCIES
   coffee-rails (~> 3.2.1)
   jquery-rails
   mongo_mapper
+  oj
   rails (= 3.2.13)
   sass-rails (~> 3.2.3)
   twitter

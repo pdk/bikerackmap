@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Google Maps JavaScript API v3 Example: Map Geolocation</title>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+    <meta charset="utf-8">
+    <script src="/js/jquery-1.9.1.min.js" type="text/javascript" charset="utf-8"></script>
+    <link href="/css/map.css" rel="stylesheet">
+    <!--
+    Include the maps javascript with sensor=true because this code is using a
+    sensor (a GPS locator) to determine the user's location.
+    See: https://developers.google.com/apis/maps/documentation/javascript/basics#SpecifyingSensor
+    -->
+    <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=true"></script>
+
+    <script>
+      var map;
+
+      function initialize() {
+        var mapOptions = {
+          zoom: 14,
+          mapTypeId: google.maps.MapTypeId.ROADMAP
+        };
+        map = new google.maps.Map(document.getElementById('map_canvas'),
+            mapOptions);
+
+        // Try HTML5 geolocation
+        if(navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(function(position) {
+            var pos = new google.maps.LatLng(position.coords.latitude,
+                                             position.coords.longitude);
+
+            // var infowindow = new google.maps.InfoWindow({
+            //   map: map,
+            //   position: pos,
+            //   content: 'You are here.'
+            // });
+
+            map.setCenter(pos);
+            map.setZoom
+            display_info_boxen();
+          }, function() {
+            handleNoGeolocation(true);
+          });
+        } else {
+          // Browser doesn't support Geolocation
+          handleNoGeolocation(false);
+        }
+      }
+
+      function handleNoGeolocation(errorFlag) {
+        if (errorFlag) {
+          var content = 'Error: The Geolocation service failed.';
+        } else {
+          var content = 'Error: Your browser doesn\'t support geolocation.';
+        }
+
+        var options = {
+          map: map,
+          position: new google.maps.LatLng(21.466667, -157.983333),
+          content: content
+        };
+
+        var infowindow = new google.maps.InfoWindow(options);
+        map.setCenter(options.position);
+        display_info_boxen();
+      }
+
+      function display_info_boxen() {
+        // var contentString = '<div id="content">hello</div';
+        // 
+        // var infowindow = new google.maps.InfoWindow({
+        //     content: contentString
+        // });
+        // 
+        // var marker = new google.maps.Marker({
+        //     position: new google.maps.LatLng(21.466667, -157.983333),
+        //     map: map,
+        //     title: 'Yo yo (Ack ack)'
+        // });
+        // google.maps.event.addListener(marker, 'click', function() {
+        //   infowindow.open(map,marker);
+        // });
+               
+        // let's get the rack locations
+        $.getJSON('/query.json', function(data) {
+          $.each(data, function(key, val) {
+            var tweet_text = val.text;
+            var tweet_location = val.coordinates.coordinates;
+            var tweet_url = val.entities.media[0].url;
+            var image_url = val.entities.media[0].media_url + ':thumb';
+          
+            // alert(tweet_text);
+            add_one_location(tweet_text, tweet_location, tweet_url, image_url);
+          });
+        });        
+      }
+
+      var example_tweet =   {
+        "created_at": "Sun Mar 18 23:59:46 +0000 2012",
+        "id": 1.8153036162754e+17,
+        "text": "@BicycleRack kapolei ross http:\/\/t.co\/pVYSOSBn",
+        "user": {
+          "screen_name": "phlatphrog"
+        },
+        "coordinates": {
+          "coordinates": [
+            -158.09003704,
+            21.33098901
+          ]
+        },
+        "entities": {
+          "media": [
+            {
+              "media_url": "http:\/\/pbs.twimg.com\/media\/AoTs5vECAAATjfN.jpg",
+              "url": "http:\/\/t.co\/pVYSOSBn"
+            }
+          ]
+        }
+      };
+
+      function add_one_location(text, location, url, image_url) {
+        // var contentString = '<div id="content">'+
+        //     '<div id="siteNotice">'+
+        //     '</div>'+
+        //     '<h1 id="firstHeading" class="firstHeading">Uluru</h1>'+
+        //     '<div id="bodyContent">'+
+        //     '<p><b>Uluru</b>, also referred to as <b>Ayers Rock</b>, is a large ' +
+        //     'sandstone rock formation in the southern part of the '+
+        //     'Northern Territory, central Australia. It lies 335&#160;km (208&#160;mi) '+
+        //     'south west of the nearest large town, Alice Springs; 450&#160;km '+
+        //     '(280&#160;mi) by road. Kata Tjuta and Uluru are the two major '+
+        //     'features of the Uluru - Kata Tjuta National Park. Uluru is '+
+        //     'sacred to the Pitjantjatjara and Yankunytjatjara, the '+
+        //     'Aboriginal people of the area. It has many springs, waterholes, '+
+        //     'rock caves and ancient paintings. Uluru is listed as a World '+
+        //     'Heritage Site.</p>'+
+        //     '<p>Attribution: Uluru, <a href="http://en.wikipedia.org/w/index.php?title=Uluru&oldid=297882194">'+
+        //     'http://en.wikipedia.org/w/index.php?title=Uluru</a> '+
+        //     '(last visited June 22, 2009).</p>'+
+        //     '</div>'+
+        //     '</div>';
+      
+        var contentString = '<div id="content"><a href="' + url + '" target="_blank"><img src="' + image_url + '" align="left"></a>' + text + '<br><br><a href="' + url + '" target="_blank">view tweet</a></div';
+
+        var infowindow = new google.maps.InfoWindow({
+            content: contentString,
+            maxWidth: 400
+        });
+
+        var marker = new google.maps.Marker({
+            position: new google.maps.LatLng(location[1], location[0]),
+            map: map,
+            title: text
+        });
+        google.maps.event.addListener(marker, 'click', function() {
+          infowindow.open(map,marker);
+        });
+      }
+
+      google.maps.event.addDomListener(window, 'load', initialize);
+    </script>
+    
+    <script type="text/javascript" charset="utf-8">
+      $(function() {
+        // alert("hello from jquery land");
+      });
+    </script>
+  </head>
+  <body>
+    <div id="map_canvas"></div>
+  </body>
+</html>

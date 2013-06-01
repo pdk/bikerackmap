@@ -3,6 +3,7 @@ Bikerackmap::Application.routes.draw do
   # first created -> highest priority.
 
   match "/map" => 'home#map'
+  match "/query.:format" => 'query#index'
   
   # Sample of regular route:
   #   match 'products/:id' => 'catalog#view'

@@ -14,5 +14,7 @@ test:
 production:
   <<: *defaults
   database: bikerackmap
+  host: <%= ENV['MONGO_HOSTNAME'] %>
+  port: <%= ENV['MONGO_PORT'] %>
   username: <%= ENV['MONGO_USERNAME'] %>
   password: <%= ENV['MONGO_PASSWORD'] %>

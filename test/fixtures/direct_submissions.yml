@@ -1,0 +1,13 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+one:
+  lat: 
+  long: 1.5
+  text: 
+  photo_url: 
+
+two:
+  lat: 
+  long: 1.5
+  text: 
+  photo_url: 

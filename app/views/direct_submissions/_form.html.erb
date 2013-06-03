@@ -1,0 +1,33 @@
+<%= form_for(@direct_submission) do |f| %>
+  <% if @direct_submission.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@direct_submission.errors.count, "error") %> prohibited this direct_submission from being saved:</h2>
+
+      <ul>
+      <% @direct_submission.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= f.label :lat %><br />
+    <%= f.text_field :lat %>
+  </div>
+  <div class="field">
+    <%= f.label :long %><br />
+    <%= f.text_field :long %>
+  </div>
+  <div class="field">
+    <%= f.label :text %><br />
+    <%= f.text_field :text %>
+  </div>
+  <div class="field">
+    <%= f.label :photo_url %><br />
+    <%= f.text_field :photo_url %>
+  </div>
+  <div class="actions">
+    <%= f.submit %>
+  </div>
+<% end %>

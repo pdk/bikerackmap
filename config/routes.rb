@@ -1,4 +1,6 @@
 Bikerackmap::Application.routes.draw do
+  resources :direct_submissions
+
   # The priority is based upon order of creation:
   # first created -> highest priority.
 

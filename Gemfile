@@ -1,7 +1,7 @@
 require 'rubygems'
-require 'mongo'
 source 'https://rubygems.org'
 
+gem 'mongo'
 gem 'rails', '3.2.13'
 gem "mongo_mapper"
 gem "bson_ext"

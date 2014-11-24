@@ -13,8 +13,10 @@ class Tweet
   key :goo_gl_long_url, String
   key :geohash_success, Boolean
   key :geohash_box, Hash
+  key :twitter_coords_success, Boolean
   key :lat, Float
   key :long, Float
+  key :lat_long_method, String
 
   Tweet.ensure_index [[:id_str, 1]], :unique => true
 
@@ -85,6 +87,7 @@ class Tweet
       if ll.present?
         self.lat = ll[0][0].to_f
         self.long = ll[0][1].to_f
+        self.lat_long_method = :google_url
       end
     end
     self.save
@@ -122,6 +125,7 @@ class Tweet
       self.lat = (geohash_box[:north_lat] + geohash_box[:south_lat]) / 2.0
       self.long = (geohash_box[:west_long] + geohash_box[:east_long]) / 2.0
       self.geohash_success = true
+      self.lat_long_method = :geohash_string
     end
     
     return self
@@ -132,26 +136,40 @@ class Tweet
     self.save
   end
 
-  def Tweet.update_all_goo_gls
-    Tweet.where(:goo_gl_success.exists => false).each do |t|
-      t.update_goo_gl_long_url
-    end
-  end
-
   def update_by_twitter_coords
     ll = data.try(:[], 'coordinates').try(:[], 'coordinates')
     if ll.present?
       self.lat = ll[1]
       self.long = ll[0]
-      self.save
+      self.lat_long_method = :twitter_coords
+      self.twitter_coords_success = true
+    else
+      self.twitter_coords_success = false
     end
+
+    self.save
   end
 
+  def recompute_lat_long
+    # first try geohash:.....
+    update_geohash_coords
+    # second try google map url/link
+    lat.present? || update_goo_gl_long_url
+    # last, use the geo data from twitter
+    lat.present? || update_by_twitter_coords
+  end
+  
+  def Tweet.force_update_all_lat_long
+    Tweet.all.each do |t|
+      t.recompute_lat_long
+    end
+    true
+  end
+  
   def Tweet.update_missing_lat_longs
     Tweet.where(:lat.exists => false).each do |t|
-      t.update_geohash_coords
-      t.lat.present? || t.update_goo_gl_long_url
-      t.lat.present? || t.update_by_twitter_coords
+      t.recompute_lat_long
     end
+    true
   end
 end

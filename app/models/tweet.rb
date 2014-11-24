@@ -91,7 +91,7 @@ class Tweet
   end
 
   def geohash_string
-    data.try(:[], 'text').match(/geohash:([0-9a-z]{8,10})/).try(:captures).try(:[], 0) || nil
+    data.try(:[], 'text').match(/geohash:([0-9a-z]{9,12})/i).try(:captures).try(:[], 0) || nil
   end
   
   def compute_geohash_coords

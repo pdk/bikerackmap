@@ -11,6 +11,8 @@ class Tweet
   key :data, Hash
   key :goo_gl_success, Boolean
   key :goo_gl_long_url, String
+  key :geohash_success, Boolean
+  key :geohash_box, Hash
   key :lat, Float
   key :long, Float
 
@@ -25,7 +27,8 @@ class Tweet
   end
   
   def Tweet.reload_all_mentions
-    Twitter.mentions_timeline.each do |t|
+    # first tweet @bicyclerack: https://twitter.com/phlatphrog/status/181524058561716225
+    Twitter.mentions_timeline(:since_id => "181524058561716224", :count => 200).each do |t|
       Tweet.insert_tweet(t)
     end
   end
@@ -87,20 +90,68 @@ class Tweet
     self.save
   end
 
+  def geohash_string
+    data.try(:[], 'text').match(/geohash:([0-9a-z]{8,10})/).try(:captures).try(:[], 0) || nil
+  end
+  
+  def compute_geohash_coords
+    # irb(main):001:0> GeoHash::decode('87z96u6mp')
+    # [
+    #     [0] [
+    #         [0] 21.33768081665039,
+    #         [1] -158.07888507843018
+    #     ],
+    #     [1] [
+    #         [0] 21.33772373199463,
+    #         [1] -158.07884216308594
+    #     ]
+    # ]
+
+    s = geohash_string
+    if s.nil?
+      self.geohash_success = false
+    else
+      box = GeoHash::decode(s)
+      # [[north latitude, west longitude],[south latitude, east longitude]]
+      self.geohash_box = {
+        :north_lat => box[0][0],
+        :west_long => box[0][1],
+        :south_lat => box[1][0],
+        :east_long => box[1][1]
+      }
+      self.lat = (geohash_box[:north_lat] + geohash_box[:south_lat]) / 2.0
+      self.long = (geohash_box[:west_long] + geohash_box[:east_long]) / 2.0
+      self.geohash_success = true
+    end
+    
+    return self
+  end
+  
+  def update_geohash_coords
+    self.compute_geohash_coords
+    self.save
+  end
+
   def Tweet.update_all_goo_gls
     Tweet.where(:goo_gl_success.exists => false).each do |t|
       t.update_goo_gl_long_url
     end
   end
 
+  def update_by_twitter_coords
+    ll = data.try(:[], 'coordinates').try(:[], 'coordinates')
+    if ll.present?
+      self.lat = ll[1]
+      self.long = ll[0]
+      self.save
+    end
+  end
+
   def Tweet.update_missing_lat_longs
     Tweet.where(:lat.exists => false).each do |t|
-      ll = t.data.try(:[], 'coordinates').try(:[], 'coordinates')
-      if ll.present?
-        t.lat = ll[0]
-        t.long = ll[1]
-        t.save
-      end
+      t.update_geohash_coords
+      t.lat.present? || t.update_goo_gl_long_url
+      t.lat.present? || t.update_by_twitter_coords
     end
   end
 end

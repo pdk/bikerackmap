@@ -72,6 +72,7 @@ GEM
     plucky (0.5.2)
       mongo (~> 1.5)
     polyglot (0.3.3)
+    pr_geohash (1.0.0)
     rack (1.4.5)
     rack-cache (1.2)
       rack (>= 0.4)
@@ -141,6 +142,7 @@ DEPENDENCIES
   mongo
   mongo_mapper
   oj
+  pr_geohash
   rails (= 3.2.13)
   sass-rails (~> 3.2.3)
   therubyracer

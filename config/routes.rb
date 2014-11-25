@@ -4,8 +4,9 @@ Bikerackmap::Application.routes.draw do
   # The priority is based upon order of creation:
   # first created -> highest priority.
 
-  match "/map" => 'home#map'
-  match "/query.:format" => 'query#index'
+  match "/map" => 'home#map', :as => :map_page
+  match "/query.:format" => 'query#index', :as => :query
+  match "/g(/:geohash_string)" => 'home#geohash', :as => :geohash_page
   
   # Sample of regular route:
   #   match 'products/:id' => 'catalog#view'

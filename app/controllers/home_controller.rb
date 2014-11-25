@@ -6,4 +6,14 @@ class HomeController < ApplicationController
   def map
     render :layout => false
   end
+
+  def geohash
+    g = params[:geohash_string]
+    if g.nil?
+      redirect_to :map_page_path
+    else
+      render :layout => false
+    end
+  end
+
 end

@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset=utf-8 />
+<title>example map</title>
+<meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+<script src='https://api.tiles.mapbox.com/mapbox.js/v2.1.4/mapbox.js'></script>
+<script src="assets/geohash.js"></script>
+<link href='https://api.tiles.mapbox.com/mapbox.js/v2.1.4/mapbox.css' rel='stylesheet' />
+<style>
+  body { margin:0; padding:0; }
+  #map { position:absolute; top:0; bottom:0; width:100%; }
+</style>
+</head>
+<body>
+<style>
+.ui-button {
+  background:#3887BE;
+  color:#FFF;
+  display:block;
+  position:absolute;
+  top:50%;left:50%;
+  width:160px;
+  margin:-20px 0 0 -80px;
+  z-index:100;
+  text-align:center;
+  padding:10px;
+  border:1px solid rgba(0,0,0,0.4);
+  border-radius:3px;
+  }
+  .ui-button:hover {
+    background:#3074a4;
+    color:#fff;
+    }
+</style>
+
+<div id='map'></div>
+
+<script>
+L.mapbox.accessToken = 'pk.eyJ1IjoicGhsYXRwaHJvZyIsImEiOiJhbDVOYnhnIn0.tgK7tFIDRvPgj0MVLozWqA';
+var map = L.mapbox.map('map', 'examples.map-i86nkdio');
+
+var myLayer = L.mapbox.featureLayer().addTo(map);
+
+// This uses the HTML5 geolocation API, which is available on
+// most mobile browsers and modern browsers, but not in Internet Explorer
+//
+// See this chart of compatibility for details:
+// http://caniuse.com/#feat=geolocation
+if (navigator.geolocation) {
+  map.locate();
+}
+
+// Once we've got a position, zoom and center the map
+// on it, and add a single marker.
+map.on('locationfound', function(e) {
+    map.fitBounds(e.bounds);
+});
+
+// If the user chooses not to allow their location
+// to be shared, display an error message.
+map.on('locationerror', function() {
+  alert("Unable to determine your current location.")
+});
+
+var popup = L.popup();
+
+function onMapClick(e) {
+  var lat = e.latlng.lat;
+  var long = e.latlng.lng;
+  var geohash = encodeGeoHash(lat, long).substr(0,9);
+
+  var text = encodeURIComponent("here's a bicycle rack");
+  var url = encodeURIComponent("http://bikerackmap.com/g/" + geohash);
+  var via = encodeURIComponent("bicyclerack");
+  var link = 'http://twitter.com/intent/tweet?text=' + text + '&url=' + url + '&via=' + via;
+
+  var message = 'To add a bicycle rack here, <a href="' + link + '" target="_blank">tweet this location</a>'
+
+  popup
+    .setLatLng(e.latlng)
+    .setContent(message)
+    .openOn(map);
+}
+
+map.on('click', onMapClick);
+
+
+</script>
+</body>
+</html>

@@ -39,13 +39,28 @@
   <script>
     L.mapbox.accessToken = 'pk.eyJ1IjoicGhsYXRwaHJvZyIsImEiOiJhbDVOYnhnIn0.tgK7tFIDRvPgj0MVLozWqA';
     var map = L.mapbox.map('map', 'phlatphrog.kahg5p0n');
-
     var myLayer = L.mapbox.featureLayer().addTo(map);
+    var moveToLocationFound = true;
 
     // Once we've got a position, zoom and center the map
     // on it, and add a single marker.
     map.on('locationfound', function(e) {
+      if (moveToLocationFound) {
         map.fitBounds(e.bounds);
+      }
+      
+      myLayer.setGeoJSON({
+        type: 'Feature',
+        geometry: {
+          type: 'Point',
+          coordinates: [e.latlng.lng, e.latlng.lat]
+        },
+        properties: {
+          'title': 'You Are Here',
+          'marker-color': '#ff8888',
+          'marker-symbol': 'cross'
+        }
+      });
     });
 
     // If the user chooses not to allow their location
@@ -79,17 +94,17 @@
   <% if params[:geohash_string].present? %>
     // center on the supplied geohash;
     var decoded_geohash = decodeGeoHash('<%= params[:geohash_string] %>');
+    moveToLocationFound = false;
   <% else %>
     // There is no geohash supplied.
     var decoded_geohash = undefined;
   <% end %>
 
-  if (!decoded_geohash) {
-    // use html5 geolocation api to center on current location
-    if (navigator.geolocation) {
-      map.locate();
-    }
-  } else {
+  if (navigator.geolocation) {
+    map.locate();
+  }
+
+  if (decoded_geohash) {
     var lat = decoded_geohash.latitude[2];
     var lng = decoded_geohash.longitude[2];
     var latlng = L.latLng(lat, lng);

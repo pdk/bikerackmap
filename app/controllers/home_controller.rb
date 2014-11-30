@@ -12,4 +12,7 @@ class HomeController < ApplicationController
     render :layout => false
   end
 
+  def show
+  end
+
 end

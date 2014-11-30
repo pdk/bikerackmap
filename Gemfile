@@ -7,6 +7,7 @@ gem "mongo_mapper"
 gem "bson_ext"
 
 gem 'twitter'
+gem 'omniauth-twitter'
 
 gem 'oj'
 gem 'awesome_print'

@@ -8,6 +8,18 @@ Bikerackmap::Application.routes.draw do
   match "/query.:format" => 'query#index', :as => :query
   match "/g(/:geohash_string)" => 'home#geohash', :as => :geohash_page
   
+  # send-a-tweet routes
+  # http://richonrails.com/articles/sending-a-tweet-to-twitter
+  
+  get 'auth/:provider/callback', to: 'sessions#create'
+  get 'auth/failure', to: redirect('/')
+  
+  get 'signout', to: 'sessions#destroy', as: 'signout'
+  resources :tweets, only: [:new, :create]
+  resources :sessions, only: [:create, :destroy]
+
+  get '/show', to: 'home#show'
+
   # Sample of regular route:
   #   match 'products/:id' => 'catalog#view'
   # Keep in mind you can assign values other than :controller and :action

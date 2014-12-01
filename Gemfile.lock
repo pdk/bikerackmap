@@ -176,5 +176,5 @@ DEPENDENCIES
   sass-rails (~> 3.2.3)
   therubyracer
   thin
-  twitter
+  twitter (~> 5.13)
   uglifier (>= 1.0.3)

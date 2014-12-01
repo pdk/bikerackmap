@@ -6,7 +6,7 @@ gem 'rails', '3.2.13'
 gem "mongo_mapper"
 gem "bson_ext"
 
-gem 'twitter'
+gem 'twitter', '~> 5.13'
 gem 'omniauth-twitter'
 
 gem 'oj'

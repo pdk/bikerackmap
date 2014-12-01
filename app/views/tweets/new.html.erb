@@ -1,6 +1,11 @@
 <p>
-  <%= form_for :tweet, url: tweets_path, method: :post do |f| %>
+  <%= form_for :tweet, url: tweets_path, :multipart => true, method: :post do |f| %>
     <%= f.text_field :message %>
+    <br>
+    photo one: <%= f.file_field :photo_one, :capture => "camera", :accept => "image/*" %>
+    <br>
+    photo two: <%= f.file_field :photo_two, :capture => "camera", :accept => "image/*" %>
+    <br>
     <%= f.submit "Send Tweet" %>
   <% end %>
 </p>

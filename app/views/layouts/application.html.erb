@@ -47,13 +47,19 @@
 
     <div>
       <% if current_user %>
-        Signed in as <strong><%= current_user.name %></strong>!
+        Signed in as <strong><%= current_user.name %> (<%= link_to("@"+current_user.twitter_handle, current_user.twitter_url) %>)</strong>!
         <%= link_to "Sign out", signout_path, id: "sign_out" %>
       <% else %>
         <%= link_to "Sign in with Twitter", "/auth/twitter", id: "sign_in" %>
       <% end %>
     </div>
 
+    <% if flash.present? %>
+      <% flash.each do |key, value| %>
+        <%= content_tag :div, value, class: "flash #{key}" %>
+      <% end %>
+    <% end %>
+    
     <%= yield %>
 	
 		</main>

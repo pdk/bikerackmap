@@ -18,11 +18,14 @@
 
       function initialize() {
         var mapOptions = {
-          zoom: 14,
+          zoom: 13,
           mapTypeId: google.maps.MapTypeId.ROADMAP
         };
         map = new google.maps.Map(document.getElementById('map_canvas'),
             mapOptions);
+        var defaultPos = new google.maps.LatLng(21.466667, -157.983333);
+
+        map.setCenter(defaultPos);
 
         // Try HTML5 geolocation
         if(navigator.geolocation) {
@@ -158,16 +161,13 @@
         });
       }
 
-      google.maps.event.addDomListener(window, 'load', initialize);
-    </script>
-    
-    <script type="text/javascript" charset="utf-8">
       $(function() {
-        // alert("hello from jquery land");
+        initialize();
       });
     </script>
   </head>
   <body>
+    <a href="#">Add a bikerack</a>
     <div id="map_canvas"></div>
   </body>
 </html>

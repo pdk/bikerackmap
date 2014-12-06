@@ -22,4 +22,35 @@ class QueryController < ApplicationController
       }
     end
   end
+  
+  
+  def mapped_tweets
+    data = {
+      'type'      => 'FeatureCollection',
+      'features'  => []
+    }
+  
+    Tweet.where(:lat.exists => true).each do |t|
+      data['features'] << {
+        'type' => 'Feature',
+        'properties' => {
+          'title'           => t.data['text'],
+          'marker-color'    => '#393',
+          'marker-size'     => 'large',
+          'marker-symbol'   => 'bicycle',
+          'url'             => %{http://twitter.com/#{t.data['user']['screen_name']}/status/#{t.id_str}}
+        },
+        geometry: {
+            type: 'Point',
+            coordinates: [t.long, t.lat]
+        }        
+      }
+    end
+  
+    respond_to do |format|
+      format.json {
+        render :json => data
+      }
+    end
+  end
 end

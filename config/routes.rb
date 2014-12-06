@@ -20,6 +20,8 @@ Bikerackmap::Application.routes.draw do
 
   get '/show', to: 'home#show'
   get '/about', to: 'home#about'
+  
+  get '/mapped-tweets.:format' => 'query#mapped_tweets', :as => :mapped_tweets
 
   # Sample of regular route:
   #   match 'products/:id' => 'catalog#view'

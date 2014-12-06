@@ -5,6 +5,21 @@
   var map = L.mapbox.map('map', 'phlatphrog.kahg5p0n');
   var moveToLocationFound = true;
 
+  var tweetedLocationsLayer = L.mapbox.featureLayer().addTo(map);
+  tweetedLocationsLayer.loadURL('/mapped-tweets.json');
+  tweetedLocationsLayer.on('mouseover', function(e) {
+      e.layer.openPopup();
+  });
+  tweetedLocationsLayer.on('mouseout', function(e) {
+      e.layer.closePopup();
+  });
+  tweetedLocationsLayer.on('click', function(e) {
+      e.layer.unbindPopup();
+      window.open(e.layer.feature.properties.url);
+  });
+
+
+
   // Once we've got a position, zoom and center the map
   // on it, and add a single marker.
   map.on('locationfound', function(e) {
@@ -111,21 +126,6 @@ if (decoded_geohash) {
               coordinates: [lng,lat]
           }
       }
-      // ,
-      // {
-      //     type: 'Feature',
-      //     properties: {
-      //         title: 'Baltimore, MD',
-      //         'marker-color': '#7ec9b1',
-      //         'marker-size': 'large',
-      //         'marker-symbol': 'star',
-      //         url: 'http://en.wikipedia.org/wiki/Baltimore'
-      //     },
-      //     geometry: {
-      //         type: 'Point',
-      //         coordinates: [-76.60767, 39.28755]
-      //     }
-      // }
     ]};
 
   var desigLocLayer = L.mapbox.featureLayer().addTo(map);

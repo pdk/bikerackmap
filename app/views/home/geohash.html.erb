@@ -70,19 +70,23 @@
     var via = encodeURIComponent("bicyclerack");
     var link = 'http://twitter.com/intent/tweet?text=' + text + '&url=' + url + '&via=' + via;
 
-    var message = '<div id="tweet_form">' +
-      'Enter a description of the rack at ' + geohash + ":" +
-      '<%= form_for :tweet, url: tweets_path, :multipart => true, method: :post do |f| %>' +
-      '  <%= f.text_field :message, :size => 40, :maxlength => 90, :autofocus => true, :placeholder => "here is a bicycle rack" %>' +
-      '  <input id="tweet_geohash" name="tweet[geohash]" type="hidden" value="' + geohash + '" />' +
-      '  <br>' +
-      '  photo one: <%= f.file_field :photo_one, :capture => "camera", :accept => "image/*" %>' +
-      '  <br>' +
-      '  photo two: <%= f.file_field :photo_two, :capture => "camera", :accept => "image/*" %>' +
-      '  <br>' +
-      '  <%= f.submit "Send Tweet" %>' +
-      '<% end %>' +
-      '</div>';
+    <% if current_user.present? %>
+      var message = '<div id="tweet_form">' +
+        'Enter a description of the rack at ' + geohash + ":" +
+        '<%= form_for :tweet, url: tweets_path, :multipart => true, method: :post do |f| %>' +
+        '  <%= f.text_field :message, :size => 40, :maxlength => 90, :autofocus => true, :placeholder => "here is a bicycle rack" %>' +
+        '  <input id="tweet_geohash" name="tweet[geohash]" type="hidden" value="' + geohash + '" />' +
+        '  <br>' +
+        '  photo: <%= f.file_field :photo_one, :capture => "camera", :accept => "image/*" %>' +
+        '  <br>' +
+        '  photo: <%= f.file_field :photo_two, :capture => "camera", :accept => "image/*" %>' +
+        '  <br>' +
+        '  <%= f.submit "Send Tweet" %>' +
+        '<% end %>' +
+        '</div>';
+    <% else %>
+      var message = 'Please <%= link_to "login via Twitter", "/auth/twitter", id: "sign_in" %> so that you can tweet new rack locations!';
+    <% end %>
 
     popup
       .setLatLng(e.latlng)

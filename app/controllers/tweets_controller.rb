@@ -28,17 +28,29 @@ class TweetsController < ApplicationController
     photo_list << save_photo(params[:tweet][:photo_two]) if params[:tweet][:photo_two].present?
 
     message = params[:tweet][:message]
+    geohash = params[:tweet][:geohash]
+
+    at_name = "@bicyclerackkk"
+
+    if message.blank?
+      message = "here is a #{at_name} http://bikerackmap.com/g/#{geohash}"
+    elsif message.include? at_name
+      message = "#{message} http://bikerackmap.com/g/#{geohash}"
+    else
+      message = "#{at_name} #{message} http://bikerackmap.com/g/#{geohash}"
+    end
 
     if photo_list.present?
       media_list = photo_list.map { |filename| File.new(filename) }
       current_user.twitter_client.update_with_media(message, media_list)
-      flash[:notice] = "tweet posted with photo(s)"
     else
-      current_user.twitter_client.update(tweet)
-      flash[:notice] = 'tweet posted'
+      current_user.twitter_client.update(message)
     end
-
-    redirect_to new_tweet_path
+  
+    @message = message
+    @geohash = geohash
+    
+    render :layout => "home"
   end
 
 end

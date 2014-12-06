@@ -1,3 +1,16 @@
-<h1>Success!</h1>
-<p>Your tweet has been sent!</p>
-<%= link_to "Would you like to send another?", new_tweet_path %>
+<div id="about">
+  
+  <h3>Success!</h3>
+  
+  <p>The new rack location has been tweeted! Mahalo!</p>
+
+  <p class="tweeted"><%= @message %></p>
+
+  <p>
+    (It might take a minute or two or more for the new post to show up on the map. Don't panic.)
+  </p>
+
+  <p>
+    <%= link_to "back to the map", geohash_page_path(@geohash) %>
+  </p>
+</div>

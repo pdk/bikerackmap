@@ -6,7 +6,11 @@ gem 'rails', '3.2.13'
 gem "mongo_mapper"
 gem "bson_ext"
 
-gem 'twitter', '~> 5.13'
+# The latest rev of twitter gem (5.13.x) is not working
+# with multiple photo attachments, but the tip on github
+# does work. Someday it'll be nice to set this to 
+# a non-github pointy.
+gem 'twitter', :git => "https://github.com/sferik/twitter.git"
 gem 'omniauth-twitter'
 
 gem 'oj'

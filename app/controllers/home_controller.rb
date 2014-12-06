@@ -1,18 +1,19 @@
 class HomeController < ApplicationController
+  layout "home"
+  
   def index
-    render :layout => false
   end
   
   def map
-    render :layout => false
   end
 
   def geohash
     g = params[:geohash_string]
-    render :layout => false
   end
 
   def show
   end
 
+  def about
+  end
 end

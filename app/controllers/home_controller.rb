@@ -12,6 +12,7 @@ class HomeController < ApplicationController
   end
 
   def show
+    @r = request
   end
 
   def about

@@ -30,7 +30,7 @@ class TweetsController < ApplicationController
     message = params[:tweet][:message]
     geohash = params[:tweet][:geohash]
 
-    at_name = "@bicyclerackkk"
+    at_name = "@bicyclerack"
 
     if message.blank?
       message = "here is a #{at_name} http://bikerackmap.com/g/#{geohash}"

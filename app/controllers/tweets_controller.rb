@@ -15,9 +15,14 @@ class TweetsController < ApplicationController
     directory = "public/images/upload/#{current_user.provider}/#{current_user.uid}/#{rand_subdir}/"
     FileUtils.mkdir_p(directory)
     path = File.join(directory, filename)
-    File.open(path, "wb") { |f|
-      f.write(photo.read)
-    }
+    # File.open(path, "wb") { |f|
+    #   f.write(photo.read)
+    # }
+
+    image = Magick::Image::read(photo.path).first
+    image.resize_to_fit!(2000)
+    image.write(path)
+    image.destroy!
     
     return path
   end
